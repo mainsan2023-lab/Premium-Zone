@@ -1,0 +1,431 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-emerald-deep: #03140e;
+    --color-emerald-card: rgba(6, 32, 22, 0.75);
+    --color-tia-neon: #10ef82;
+    --color-tia-lime: #00ff88;
+    --color-pz-deep: #0B6B3A;
+    --color-pz-accent: #20C878;
+  }
+
+  body {
+    font-family: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+    background-color: #03130d;
+    color: #e2f1e8;
+    overflow-x: hidden;
+  }
+
+  /* Custom smooth scrollbar */
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #020e09;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #0B6B3A;
+    border-radius: 4px;
+    border: 1px solid rgba(32, 200, 120, 0.35);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #20C878;
+  }
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(6, 30, 21, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(16, 239, 130, 0.2);
+}
+
+.glass-panel-hover {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.glass-panel-hover:hover {
+  border-color: rgba(16, 239, 130, 0.5);
+  box-shadow: 0 10px 35px -10px rgba(16, 239, 130, 0.3);
+  transform: translateY(-3px);
+}
+
+.text-gradient-tia {
+  background: linear-gradient(135deg, #ffffff 15%, #6ee7b7 50%, #10ef82 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-lime {
+  background: linear-gradient(135deg, #10ef82 0%, #a3e635 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Button & Interactive element animations */
+button, a.btn, .cursor-pointer {
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, filter 0.2s ease;
+}
+
+button:active, a.btn:active {
+  transform: scale(0.94) translateY(1px) !important;
+}
+
+/* Tactile Click Ripple Burst */
+.click-ripple-burst {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle, rgba(16, 239, 130, 0.75) 0%, rgba(0, 255, 136, 0.3) 45%, transparent 75%);
+  animation: rippleExpand 0.68s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+  z-index: 50;
+}
+
+@keyframes rippleExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0.9;
+  }
+  60% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(2.8);
+    opacity: 0;
+  }
+}
+
+/* Top bar button hover light burst effect */
+.nav-pill-btn {
+  position: relative;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.nav-pill-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(16, 239, 130, 0.12);
+  border-color: rgba(16, 239, 130, 0.6);
+  box-shadow: 0 0 25px rgba(16, 239, 130, 0.55), 0 0 50px rgba(16, 239, 130, 0.25);
+}
+
+.nav-pill-btn:hover .nav-icon {
+  transform: scale(1.28);
+  filter: drop-shadow(0 0 8px #10ef82) drop-shadow(0 0 16px #00ff88);
+}
+
+.nav-icon {
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+
+/* Glowing buttons */
+.tia-glow-btn {
+  box-shadow: 0 0 22px rgba(16, 239, 130, 0.4);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.tia-glow-btn:hover {
+  box-shadow: 0 0 40px rgba(16, 239, 130, 0.75);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* 3D Perspective utilities for Carousel */
+.perspective-container {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+/* Scroll-triggered reveal animations */
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.scroll-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stagger-1 { transition-delay: 80ms; }
+.stagger-2 { transition-delay: 160ms; }
+.stagger-3 { transition-delay: 240ms; }
+.stagger-4 { transition-delay: 320ms; }
+
+/* ==========================================================================
+   Multi-Directional Page & Content Entrance Animation System
+   - Text from Right: "যেমন কোনো টেক্সট ডান দিক থেকে আসবে"
+   - Shapes/Badges from Left/Right: "এরপরে শেপ ডান দিক থেকে আসবে বা বাম দিক থেকে আসবে"
+   - Subtext from Left
+   - Buttons & Interactive from Bottom
+   - Alternating Cards (Left, Bottom, Right)
+   - Zero Screen Blackout
+   ========================================================================== */
+
+@keyframes animFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(65px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-65px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes animFromBottom {
+  0% {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes animShapeLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-65px) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes animShapeRight {
+  0% {
+    opacity: 0;
+    transform: translateX(65px) scale(0.93);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+/* Multi-directional class helpers */
+.anim-from-right,
+.text-from-right,
+.nav-entrance-heading {
+  animation: animFromRight 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 80ms;
+  will-change: opacity, transform;
+}
+
+.anim-from-left,
+.text-from-left,
+.nav-entrance-subtext {
+  animation: animFromLeft 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 150ms;
+  will-change: opacity, transform;
+}
+
+.anim-shape-left,
+.shape-from-left {
+  animation: animShapeLeft 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 60ms;
+  will-change: opacity, transform;
+}
+
+.anim-shape-right,
+.shape-from-right {
+  animation: animShapeRight 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 100ms;
+  will-change: opacity, transform;
+}
+
+.anim-from-bottom,
+.btn-from-bottom,
+.nav-entrance-interactive {
+  animation: animFromBottom 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 240ms;
+  will-change: opacity, transform;
+}
+
+.nav-entrance-container {
+  will-change: opacity;
+}
+
+/* Alternating Card Entrances */
+.card-from-left {
+  animation: animFromLeft 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.card-from-bottom {
+  animation: animFromBottom 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.card-from-right {
+  animation: animFromRight 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.nav-entrance-card {
+  animation: animFromBottom 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  will-change: opacity, transform;
+}
+
+.nav-stagger-1 { animation-delay: 120ms; }
+.nav-stagger-2 { animation-delay: 200ms; }
+.nav-stagger-3 { animation-delay: 280ms; }
+.nav-stagger-4 { animation-delay: 360ms; }
+.nav-stagger-5 { animation-delay: 440ms; }
+.nav-stagger-6 { animation-delay: 520ms; }
+.nav-stagger-7 { animation-delay: 600ms; }
+.nav-stagger-8 { animation-delay: 680ms; }
+.nav-stagger-9 { animation-delay: 760ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-reveal,
+  .nav-entrance-container,
+  .nav-entrance-heading,
+  .nav-entrance-subtext,
+  .nav-entrance-interactive,
+  .nav-entrance-card,
+  .anim-from-right,
+  .anim-from-left,
+  .anim-shape-left,
+  .anim-shape-right,
+  .anim-from-bottom,
+  .card-from-left,
+  .card-from-bottom,
+  .card-from-right {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Big watermark text behind hero */
+.hero-watermark {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 900;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(16, 239, 130, 0.15);
+  user-select: none;
+  pointer-events: none;
+  letter-spacing: 0.08em;
+}
+
+/* ==========================================================================
+   Premium Luminous Deep-Green Lighting System
+   Palette: #0B6B3A (Deep Green) & #20C878 (Accent Green)
+   ========================================================================== */
+
+/* Luminous sweep animation across dividers */
+@keyframes luminousSweep {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.95;
+  }
+  70% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.luminous-sweep-beam {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(32, 200, 120, 0.95) 50%, transparent 100%);
+  filter: drop-shadow(0 0 6px #20C878);
+  animation: luminousSweep 7.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+}
+
+/* Luminous Card Border styling with center/top illumination */
+.luminous-card {
+  position: relative;
+  border: 1px solid rgba(11, 107, 58, 0.38) !important;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(32, 200, 120, 0.32),
+    0 8px 24px -6px rgba(11, 107, 58, 0.22);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.luminous-card:hover {
+  border-color: rgba(32, 200, 120, 0.6) !important;
+  box-shadow: 
+    inset 0 1px 2px 0 rgba(32, 200, 120, 0.65),
+    0 14px 35px -6px rgba(11, 107, 58, 0.4),
+    0 0 18px rgba(32, 200, 120, 0.18);
+}
+
+/* Luminous Card Top Edge Illumination */
+.luminous-edge-top {
+  position: relative;
+}
+
+.luminous-edge-top::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 15%;
+  right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(11, 107, 58, 0.3) 15%, rgba(32, 200, 120, 0.85) 50%, rgba(11, 107, 58, 0.3) 85%, transparent 100%);
+  box-shadow: 0 0 10px rgba(32, 200, 120, 0.55);
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Luminous Nav Bar Pill */
+.luminous-nav-pill {
+  border: 1px solid rgba(11, 107, 58, 0.45) !important;
+  box-shadow: 
+    inset 0 1px 0 0 rgba(32, 200, 120, 0.45),
+    0 10px 30px rgba(0, 0, 0, 0.65),
+    0 0 20px -2px rgba(11, 107, 58, 0.35) !important;
+}
+
+/* Decorative short line accent */
+.luminous-line-accent {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(11, 107, 58, 0.3) 15%, rgba(32, 200, 120, 0.85) 50%, rgba(11, 107, 58, 0.3) 85%, transparent 100%);
+  box-shadow: 0 0 8px rgba(32, 200, 120, 0.45);
+}
+
+/* Lenis smooth scroll optimization */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+
